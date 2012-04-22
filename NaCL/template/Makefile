@@ -17,7 +17,7 @@
 #
 PROJECT:=nacl
 LDFLAGS:=-lppapi_cpp -lppapi -lppapi_gles2
-CXX_SOURCES:=$(PROJECT).cc nacl.cc
+CXX_SOURCES:=$(PROJECT).cc nacl.cc demo.cc
 
 
 #

@@ -20,9 +20,8 @@
 #include "ppapi/c/pp_graphics_3d.h"
 #include "ppapi/c/ppb_graphics_3d.h"
 #include "ppapi/c/ppp_graphics_3d.h"
-#include "ppapi/gles2/gl2ext_ppapi.h"
 
-#include "GLES2/gl2.h"
+#include "demo.h"
 
 static PPB_Messaging* ppb_messaging_interface = NULL;
 static PPB_Var* ppb_var_interface = NULL;
@@ -36,8 +35,6 @@ int32_t pluginWidth;
 int32_t pluginHeight;
 PP_Instance myInstance;
 PP_Resource context;
-
-//#define DEBUG_MESSAGES
 
 #ifdef DEBUG_MESSAGES
 	/**
@@ -54,9 +51,10 @@ PP_Resource context;
 	  return PP_MakeUndefined();
 	}
 
-	#define DBG_LOG(MSG) ppb_messaging_interface->PostMessage(myInstance, CStrToVar(MSG))
-#else
-	#define DBG_LOG(MSG)
+	void PrintDebugMesg(const char* str)
+	{
+		ppb_messaging_interface->PostMessage(myInstance, CStrToVar(str));
+	}
 #endif
 
 void DrawFrame(void* user_data, int32_t result)
@@ -65,8 +63,7 @@ void DrawFrame(void* user_data, int32_t result)
 
 	DBG_LOG("DrawFrame");
 
-	gl->ClearColor(context, 1.0f, 0.0f, 0.0f, 1.0f);
-	gl->Clear(context, GL_COLOR_BUFFER_BIT);
+	DemoRender(context, gl);
 
 	swapBuffersCallback.func = DrawFrame;
 	swapBuffersCallback.user_data = 0;
@@ -102,6 +99,8 @@ void InitGL(void* user_data, int32_t result)
 
 	gl->ClearColor(context, 0.0f, 1.0f, 0.0f, 1.0f);
 	gl->Clear(context, GL_COLOR_BUFFER_BIT);
+
+	DemoInit(context, gl);
 
 	swapBuffersCallback.func = 0;
 	swapBuffersCallback.user_data = 0;
@@ -289,5 +288,6 @@ PP_EXPORT const void* PPP_GetInterface(const char* interface_name) {
  * Called before the plugin module is unloaded.
  */
 PP_EXPORT void PPP_ShutdownModule() {
+	DemoEnd();
 	glTerminatePPAPI();
 }
