@@ -2,6 +2,10 @@
 bin/
 obj/
 
+# Visual Studio
+*.suo
+*.user
+
 # Compiled source #
 ###################
 *.com
